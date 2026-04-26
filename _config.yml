@@ -1,0 +1,28 @@
+title: "Building Superligaen Analytics"
+description: "A data engineer's diary — from raw API calls to a live football dashboard. Everything that went wrong, and how we fixed it."
+author: "Salih Ugur Kımıllı"
+url: "https://saugki1773.github.io"
+baseurl: "/data-engineering-blog"
+
+theme: minima
+
+minima:
+  skin: dark
+
+header_pages:
+  - index.md
+  - about.md
+
+show_excerpts: true
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+permalink: /:year/:month/:day/:title.html
+
+markdown: kramdown
+highlighter: rouge
+
+kramdown:
+  syntax_highlighter: rouge
