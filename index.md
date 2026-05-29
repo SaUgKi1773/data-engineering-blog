@@ -21,6 +21,14 @@ The project was built in roughly **10 days** in April 2026, and almost nothing w
 8. [Adding Web Analytics — Vercel and Cloudflare]({{ site.baseurl }}{% post_url 2026-04-19-launch-and-analytics %})
 9. [Global Launch — A Conclusion]({{ site.baseurl }}{% post_url 2026-04-19-global-launch %})
 10. [What's Next — The Road Ahead]({{ site.baseurl }}{% post_url 2026-04-20-whats-next %})
+11. [Choosing a Football Data API: api-football vs football-data.org vs Sportmonks]({{ site.baseurl }}{% post_url 2026-04-25-switching-api-providers %})
+12. [Data Quality Tests — Making the Pipeline Fail Loudly]({{ site.baseurl }}{% post_url 2026-04-29-data-quality-tests %})
+13. [Building the Player Analytics Layer]({{ site.baseurl }}{% post_url 2026-05-05-player-analytics-layer %})
+14. [Organising the Semantic Layer — From Raw Models to Mart Views]({{ site.baseurl }}{% post_url 2026-05-11-organising-the-semantic-layer %})
+15. [Advanced BI Techniques — Making the Data Say More]({{ site.baseurl }}{% post_url 2026-05-17-advanced-bi-techniques %})
+16. [Fixing Cold-Start Failures in a DuckDB-WASM Dashboard]({{ site.baseurl }}{% post_url 2026-05-25-dashboard-performance-cold-start %})
+17. [Building a Fan Forum with an LLM Pipeline]({{ site.baseurl }}{% post_url 2026-05-25-fan-forum-llm-pipeline %})
+18. [What Happens When You Share a Side Project on LinkedIn]({{ site.baseurl }}{% post_url 2026-05-25-linkedin-traffic-spike %})
 
 ---
 
