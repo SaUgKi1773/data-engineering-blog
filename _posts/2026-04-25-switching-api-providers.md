@@ -21,7 +21,7 @@ Before a single line of pipeline code was written, there was a more fundamental 
 | **Formations** | ❌ | ❌ | ✅ |
 | **Period-level breakdowns** | ❌ | ❌ | ✅ |
 | **Historical data** | ✅ | ✅ | ✅ |
-| **xG (expected goals)** | ❌ | ❌ | ❌ (paywalled) |
+| **xG (expected goals)** | ✅ | ❌ | ❌ (paywalled) |
 | **Verdict** | Free plan unusable long-term | Unusable for this project | Current choice |
 
 ---
