@@ -1,13 +1,63 @@
 ---
 layout: post
-title: "Choosing a Football Data API: api-football vs football-data.org vs Sportmonks"
+title: "Why We Migrated from api-football to Sportmonks"
 date: 2026-04-25
 categories: [data-engineering, ingestion, api]
 ---
 
-Before a single line of pipeline code was written, there was a more fundamental question: where does the data come from? Football data APIs are plentiful, but free tiers vary wildly in what they actually give you. I evaluated three providers before settling on the one that runs this project today.
+This was not planned. The original architecture was built on api-football.com, the bronze layer was complete, the pipeline was running, and the dashboard was live. Then the nightly job started failing — and fixing it meant rebuilding the entire ingestion layer from scratch.
 
-## The Short Version
+---
+
+## How It Started: api-football.com
+
+api-football.com was the obvious first choice. It covers Danish Superligaen on the free tier, the documentation is readable, and the data model is straightforward — one endpoint per resource type, predictable response shapes, consistent pagination. Compared to the alternatives, it looked like the path of least resistance.
+
+The free tier has two constraints: **100 calls per day** and **10 calls per minute**. Both shaped every architectural decision that followed.
+
+The bronze layer ended up covering 21 endpoints — leagues, seasons, rounds, standings, fixtures, fixture events, statistics, lineups, player stats, teams, venues, players, top scorers, injuries, predictions, and more. A full historical backfill across all seasons required thousands of calls, spread over weeks of incremental runs. The nightly job was engineered to be as lean as possible: fetch only what could have changed, skip everything stable, stay well under the daily ceiling.
+
+**The 100-call ceiling also blocked the project from growing.** Adding the Danish Cup would have been a one-line config change. But it would immediately blow the daily quota. The architecture was ready to scale. The API contract was not.
+
+To do the full historical backfill and complete development properly, I bought a one-time paid plan — 7,500 calls, enough to bootstrap all seasons and do all the pipeline work. That plan expired when development was done.
+
+---
+
+## The Pipeline Broke
+
+The morning after the paid plan expired, the nightly job failed. The error message was unambiguous: *current season data requires an upgrade. The free plan only covers the previous season.*
+
+This was not a footnote in the pricing page. It is a hard wall. The free tier is structurally limited to historical data — it cannot serve a live pipeline. I had been building on the paid plan without realising that the thing keeping the current season accessible was the payment, not the product. The moment the paid plan lapsed, the dashboard was serving last season's data.
+
+Upgrading was not an option — this project runs on free services by design. So the data source had to change.
+
+---
+
+## Evaluating the Alternatives
+
+**football-data.org** was the first thing I looked at. It has a clean API and genuinely covers the current season for the competitions it supports. But its free tier covers only 13 fixed competitions — the top five European leagues, a handful of cups, Eredivisie, Championship, and a few others. Danish Superligaen is not on the list and there is no way to add it. End of evaluation.
+
+Even if Superligaen were covered, the data depth would be a problem. Match objects on the free plan return the final score, half-time score, and referee — nothing else. No possession, no shots, no player lineups, no player stats, no formations. That is not enough to build a player analytics dashboard on.
+
+**Sportmonks** was the answer. Free tier includes Superligaen, current season works, and the data is richer than anything api-football.com provided. The catch: the architecture is fundamentally different.
+
+---
+
+## Rebuilding the Bronze Layer
+
+api-football.com follows the standard REST pattern — one endpoint per resource. To fetch a fixture with its stats, events, lineups, and player performances, you make separate calls to each endpoint and join the results yourself.
+
+Sportmonks uses an **include system**. There is one endpoint per entity, and you specify what related data you want in the same request. A single call to the fixtures endpoint with the right include string can return scores, events, lineups, player statistics, referee, formations, and period breakdowns all at once. What took seven or eight api-football.com calls now takes one.
+
+This meant the entire bronze ingestion layer had to be rebuilt. The old architecture — one script per endpoint group — was replaced with a **metadata-driven engine**: a single manifest file that lists every entity to ingest, its include string, its delete strategy, and which iteration pattern to use (by season, by round, by date window, etc.). Adding a new entity is a one-line config change. The engine handles the rest.
+
+The migration took a few days. The Sportmonks data model is more complex than api-football.com — the nesting is deep, some sub-entities are inconsistently present across fixtures, and the documentation for edge cases is thin. Getting the include strings right took experimentation. But once the engine was working, the pipeline was cleaner than the old design in every way.
+
+The nightly incremental run that previously consumed 30–50 api-football.com calls now takes 5–10 Sportmonks calls. The rate limit of ~3,000 requests per hour per entity is never the bottleneck.
+
+---
+
+## Provider Comparison
 
 | | api-football.com | football-data.org | Sportmonks |
 |---|---|---|---|
@@ -21,59 +71,13 @@ Before a single line of pipeline code was written, there was a more fundamental 
 | **Formations** | ❌ | ❌ | ✅ |
 | **Period-level breakdowns** | ❌ | ❌ | ✅ |
 | **Historical data** | ✅ | ✅ | ✅ |
-| **xG (expected goals)** | ❌ | ❌ | ❌ (paywalled) |
-| **Verdict** | Free plan unusable long-term | Unusable for this project | Current choice |
+| **xG (expected goals)** | ✅ | ❌ | ❌ (paywalled) |
+| **Verdict** | Free plan unusable for live pipeline | Unusable for this project | Current choice |
 
 ---
 
-## football-data.org — Disqualified Immediately
+## What I Would Do Differently
 
-I looked at football-data.org first because it markets itself as the developer-friendly, open-data option and it genuinely has a clean API design. The free tier covers 13 competitions: the top five European leagues, a handful of international cups, Eredivisie, Championship, Primeira Liga, Brasileirão, and Copa Libertadores. Current season data is available for all of them — standings, results, top scorers all work fine.
+Start with Sportmonks. The free tier is the most capable of the three for a project that needs a smaller European league, real match statistics, and room to grow. The include system has a learning curve but the payoff is a simpler, more efficient pipeline.
 
-Danish Superligaen is not on that list. End of evaluation.
-
-There is no way to request additional competitions, no pay-as-you-go option for smaller leagues, and the upgrade path jumps straight to paid tiers designed for commercial applications. For a project built around Danish football specifically, football-data.org is simply not an option regardless of how nice the API design is.
-
-Even if Superligaen were included, the data depth on the free plan would be a problem. Match objects return the final score, half-time score, and referee — nothing else. No possession, no shots, no player lineups, no individual stats, no formations. For a dashboard that shows player ratings, shot maps, and formation breakdowns, that is not enough to build on. football-data.org is useful if you need standings and results across the major European competitions. It is not a foundation for player-level analytics.
-
-If your project targets one of the covered competitions and only needs results and standings, football-data.org is worth a serious look. For anything more granular, or any league outside its fixed list, look elsewhere.
-
----
-
-## api-football.com — Good Enough to Start, Too Limited to Finish
-
-api-football.com was the first real choice. The free tier includes Danish Superligaen, the documentation is readable, and the data model is straightforward — one endpoint per resource type, predictable response shapes, consistent pagination.
-
-**The 100-call-per-day ceiling is the defining constraint.** Everything about the early pipeline was designed around not exceeding it. The bronze layer covered 21 endpoints. A full historical backfill required thousands of calls spread over weeks. The nightly incremental run was engineered to do the absolute minimum — fetch only what changed, skip everything stable.
-
-That constraint also blocked the project from growing. Adding the Danish Cup is a one-line config change. But it would immediately blow the daily quota. The architecture could scale. The API contract could not.
-
-Data quality was also an ongoing issue. Several endpoints returned inconsistently structured responses depending on the fixture — player stats missing for one team, venue records with null coordinates, referee data only partially populated. Nothing catastrophic, but the silver layer spent a lot of effort compensating for gaps that were endemic to the source rather than edge cases.
-
-**The current season problem — the thing that actually ended it.** Something I only discovered late into development: the free plan does not include the current season. During development I had purchased a one-time paid plan (7,500 calls — enough to complete the historical backfill and do all the pipeline work). When that plan expired and I reverted to the free tier, the nightly pipeline started failing with a clear message: current season data requires an upgrade. The free plan locks you to the previous season. That was the final reason to migrate. It is not a footnote in the pricing page — it is a hard wall that makes the free tier useless for any live pipeline.
-
-api-football.com is a reasonable starting point if you are doing historical analysis on past seasons and your project fits within 100 calls a day. For anything live, plan on paying from the start.
-
----
-
-## Sportmonks — What the Project Runs on Today
-
-Sportmonks is a different category of product. The free tier is genuinely generous, the data is richer, and the architecture forces you to think about data fetching differently.
-
-The key design difference is the **include system**. Instead of one endpoint per resource type, Sportmonks has one endpoint per entity where you specify what related data you want in the same call. Fetching a fixture with scores, events, lineups, player statistics, referee, formations, and period breakdowns is a single API request. The same data from api-football.com would have required seven or eight separate calls.
-
-For a nightly pipeline this matters a lot. The incremental run that previously consumed 30–50 api-football.com calls now takes 5–10 Sportmonks calls. The rate limit of ~3,000 requests per hour per entity is essentially never the bottleneck in normal operation.
-
-The data is also richer than anything api-football.com provided at the free tier. Sportmonks gives you period-level breakdowns (first half shots, second half possession), detailed position types for lineup players (attacking midfielder, defensive midfielder rather than just a generic position label), and formation data at the fixture level. None of that existed in the api-football.com pipeline.
-
-**What the Sportmonks free plan still blocks:** xG, expected lineups, ball coordinates, pressure data, in-play odds, pre- and post-match news, and video highlights. Of these, xG is the most notable absence — it is the one metric that serious football analytics work relies on most heavily. Its absence is more noticeable with Sportmonks than it was with api-football.com, because every other dimension of the data is so much more complete. It is the one obvious gap.
-
-The include system also has a learning curve. Building the right include string for a given endpoint takes time and experimentation. The nesting is deep, some sub-entities are inconsistently present across fixtures, and documentation for edge cases is thin. But once the include strings are working, the pipeline is significantly simpler than the old multi-endpoint design — one generic engine, one manifest, every strategy pattern implemented once.
-
----
-
-## What I Would Choose Again
-
-If starting from scratch today: Sportmonks, no hesitation. The free tier is the most capable of the three for a project that needs a smaller European league, real match statistics, and room to add competitions without rebuilding the ingestion layer.
-
-football-data.org is not an option if your target league is outside the top five. api-football.com is viable for a small project with modest ambitions, but the 100-call limit will eventually become the ceiling rather than just a constraint. Sportmonks charges nothing until you need xG or commercial features, and by then you will have a project worth paying for.
+The detour through api-football.com was not entirely wasted — building a complete bronze layer once taught me what the ingestion layer needed to do, and the Sportmonks rebuild came out better for it. But if I were starting today I would not make the detour. Check whether the free tier covers your league and your current season before writing a single line of pipeline code. That check takes five minutes. The migration took several days.
