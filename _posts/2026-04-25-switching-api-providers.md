@@ -13,7 +13,7 @@ Before a single line of pipeline code was written, there was a more fundamental 
 |---|---|---|---|
 | **Free plan call limit** | 100 / day | 10 / minute | ~3,000 / hour per entity |
 | **Danish Superligaen included** | ✅ | ❌ | ✅ |
-| **Current live season** | ✅ | ❌ (free tier only covers select top leagues) | ✅ |
+| **Current live season** | ❌ on free plan (paid plan required) | ✅ for covered leagues | ✅ |
 | **Match statistics** (shots, possession, corners) | ✅ | ❌ | ✅ |
 | **Player lineups** | ✅ | ❌ | ✅ |
 | **Individual player stats** (ratings, passes, duels) | ✅ | ❌ | ✅ |
@@ -22,19 +22,21 @@ Before a single line of pipeline code was written, there was a more fundamental 
 | **Period-level breakdowns** | ❌ | ❌ | ✅ |
 | **Historical data** | ✅ | ✅ | ✅ |
 | **xG (expected goals)** | ❌ | ❌ | ❌ (paywalled) |
-| **Verdict** | Usable but capped | Unusable for this project | Current choice |
+| **Verdict** | Free plan unusable long-term | Unusable for this project | Current choice |
 
 ---
 
 ## football-data.org — Disqualified Immediately
 
-I looked at football-data.org first because it markets itself as the developer-friendly, open-data option and it genuinely has a clean API design. The problem is the free tier only covers a fixed list of major competitions: Premier League, Bundesliga, La Liga, Serie A, Ligue 1, and a handful of cup competitions.
+I looked at football-data.org first because it markets itself as the developer-friendly, open-data option and it genuinely has a clean API design. The free tier covers 13 competitions: the top five European leagues, a handful of international cups, Eredivisie, Championship, Primeira Liga, Brasileirão, and Copa Libertadores. Current season data is available for all of them — standings, results, top scorers all work fine.
 
 Danish Superligaen is not on that list. End of evaluation.
 
 There is no way to request additional competitions, no pay-as-you-go option for smaller leagues, and the upgrade path jumps straight to paid tiers designed for commercial applications. For a project built around Danish football specifically, football-data.org is simply not an option regardless of how nice the API design is.
 
-If your project targets one of the big five European leagues, football-data.org is worth a serious look. For anything else, check the free tier coverage list before spending time on it.
+Even if Superligaen were included, the data depth on the free plan would be a problem. Match objects return the final score, half-time score, and referee — nothing else. No possession, no shots, no player lineups, no individual stats, no formations. For a dashboard that shows player ratings, shot maps, and formation breakdowns, that is not enough to build on. football-data.org is useful if you need standings and results across the major European competitions. It is not a foundation for player-level analytics.
+
+If your project targets one of the covered competitions and only needs results and standings, football-data.org is worth a serious look. For anything more granular, or any league outside its fixed list, look elsewhere.
 
 ---
 
@@ -48,7 +50,9 @@ That constraint also blocked the project from growing. Adding the Danish Cup is 
 
 Data quality was also an ongoing issue. Several endpoints returned inconsistently structured responses depending on the fixture — player stats missing for one team, venue records with null coordinates, referee data only partially populated. Nothing catastrophic, but the silver layer spent a lot of effort compensating for gaps that were endemic to the source rather than edge cases.
 
-api-football.com is a reasonable starting point for a project that fits within 100 calls a day and does not need to grow. This project outgrew it.
+**The current season problem — the thing that actually ended it.** Something I only discovered late into development: the free plan does not include the current season. During development I had purchased a one-time paid plan (7,500 calls — enough to complete the historical backfill and do all the pipeline work). When that plan expired and I reverted to the free tier, the nightly pipeline started failing with a clear message: current season data requires an upgrade. The free plan locks you to the previous season. That was the final reason to migrate. It is not a footnote in the pricing page — it is a hard wall that makes the free tier useless for any live pipeline.
+
+api-football.com is a reasonable starting point if you are doing historical analysis on past seasons and your project fits within 100 calls a day. For anything live, plan on paying from the start.
 
 ---
 
