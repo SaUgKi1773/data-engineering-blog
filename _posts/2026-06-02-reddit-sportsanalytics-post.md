@@ -15,6 +15,8 @@ Here is what the traffic looked like.
 
 The spike hit on May 30, the day of the post, peaking at around 35 visitors. What surprised me was the days after — May 31 and June 1 both held at around 23–24 visitors per day, roughly three times the pre-post baseline of 8–9. That kind of sustained lift usually means secondary sharing or return visits, not just a one-day curiosity bump.
 
+![Daily visitors over the week of the Reddit post]({{ site.baseurl }}/assets/img/reddit-dau-chart.png)
+
 ## Where the Visitors Came From
 
 The site visitor geography tells two stories at once.
