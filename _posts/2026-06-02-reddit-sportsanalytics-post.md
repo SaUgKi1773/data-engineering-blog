@@ -17,18 +17,20 @@ The spike hit on May 30, the day of the post, peaking at around 35 visitors. Wha
 
 ## Where the Visitors Came From
 
-The geographic breakdown is almost the inverse of the LinkedIn spike.
+The site visitor geography tells two stories at once.
 
-| Country | Share |
-|---------|-------|
-| United States | 26.1% |
-| United Kingdom | 9.5% |
-| Denmark | 8.1% |
-| Other | 56.3% |
+| Country | Visitors | Share |
+|---------|----------|-------|
+| Denmark | 69 | 52% |
+| United States | 9 | 7% |
+| United Kingdom | 7 | 5% |
+| Germany | 5 | 4% |
+| Türkiye | 5 | 4% |
+| Other | 34 | 26% |
 
-On LinkedIn, Denmark was 80% of visitors — a professional network in the country the dashboard is about. On Reddit, Denmark was 8.1%. The dashboard is built for Danish football, but the people who showed up came for the engineering story: zero recurring cost, fully automated pipeline, built on free tiers. The football content was almost incidental to who clicked through.
+Denmark is still dominant at 52% — the ongoing organic audience from the LinkedIn post kept arriving throughout the week. But the Reddit post brought a genuinely international tail that was not there before: the US, UK, Germany, and a long list of countries with no obvious connection to Danish football. Hungary, Morocco, South Korea, Uganda, Zambia — the post reached places the LinkedIn share never did.
 
-The 56.3% "Other" is also worth noting. The post travelled well beyond an English-speaking audience, which suggests it was shared in places I cannot track — Discord servers, newsletters, or other communities.
+The Reddit post viewer geography told a different story: the US was 26% of Reddit views, Denmark only 8%. That gap between who read the post and who clicked through to the site is the interesting part. The engineering angle attracted a broad international audience on Reddit, but the Danes in that audience were significantly more likely to actually visit the dashboard — which makes sense, since they have a reason to care about the content once they arrive.
 
 ## What a 14% Bounce Rate Means Here
 
