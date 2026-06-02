@@ -44,8 +44,4 @@ The pre-post baseline was around 8–9 visitors per day. After the spike it sett
 
 It is a different pattern from LinkedIn, where the spike was sharper and the return to baseline was faster. The Reddit audience appears to have generated more durable downstream traffic, possibly because technical communities are more likely to bookmark, share in Slack, or link from other posts.
 
-## What I Would Do Differently
-
-The framing worked — leading with the zero recurring cost angle clearly resonated with a practitioners' audience. What I did not do was track which specific pages Reddit visitors spent the most time on. With 15 pages per visitor on average, some pages clearly held attention better than others. Knowing which ones would inform what to build next.
-
 The Danish football communities have not seen this yet. That will be a different experiment — the same product, but an audience that cares about the football and not the architecture. I expect the geographic distribution to look a lot more like the LinkedIn post.
