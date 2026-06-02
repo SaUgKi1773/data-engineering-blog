@@ -5,7 +5,7 @@ date: 2026-06-02
 categories: [analytics, growth]
 ---
 
-A few months ago I posted a side project to Reddit and was not sure what to expect. The response surprised me — not because people were polite about it, but because they actually *used* it. This is the story of how that project came to be, what is under the hood, and what happens when you find out a pet project might be something more.
+Three days ago I posted a side project to Reddit and was not sure what to expect. The response surprised me — not because people were polite about it, but because they actually *used* it. This is the story of how that project came to be, what is under the hood, and what happens when you find out a pet project might be something more.
 
 ## The Gap Nobody Filled
 
