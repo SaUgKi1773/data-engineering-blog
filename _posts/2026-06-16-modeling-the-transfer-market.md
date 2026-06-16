@@ -5,7 +5,9 @@ date: 2026-06-16
 categories: [data-engineering, data-modeling, dbt]
 ---
 
-Most of our dimensional model is about what happens on the pitch — matches, appearances, cards, goals. Adding the transfer market was the first time we modelled a business process that happens *off* the pitch, and it turned out to be one of the more interesting modelling exercises in the whole project. A transfer looks simple — Player X moves from Club A to Club B for €Y — but almost every part of that sentence has an edge case hiding in it. This post walks through the full journey, from the raw API rows to a `fct_team_transfers` fact table and the Transfer Intelligence dashboard page it powers.
+Most of our dimensional model is about what happens on the pitch — matches, appearances, cards, goals. Adding the transfer market was the first time we modelled a business process that happens *off* the pitch, and it turned out to be the hardest modelling exercise in the whole project. A transfer looks simple — Player X moves from Club A to Club B for €Y — but almost every part of that sentence has an edge case hiding in it.
+
+That's the thing about data modelling that's easy to underrate: the difficulty is almost never the SQL. It's the decisions. What is the grain? What does a missing value *mean*? Which entity is this, really, or is it the same entity wearing a different hat? Each of those questions has several defensible answers, and you usually can't tell which one was right until weeks later, when you're building a dashboard on top and the model either bends to the question being asked or fights you the whole way. Every modelling choice in this post showed up again downstream — sometimes as a feature that fell out for free, sometimes as a bullet we'd dodged. This post walks through the full journey, from the raw API rows to a `fct_team_transfers` fact table and the Transfer Intelligence page it powers, and tries to be honest about how often "the modelling" *was* the work.
 
 ## The raw shape
 
@@ -45,6 +47,8 @@ So we used the same pattern. The grain of `fct_team_transfers` is **one row per 
 - A retirement emits a single `Outgoing` row for the club losing the player, with no destination.
 
 The model builds this as an `outgoing` CTE (subject = `from_team`) and an `incoming` CTE (subject = `to_team`), each filtered to rows where its own side is a real, non-placeholder club, then `UNION ALL`-ed together. The "other" club becomes a *partner* attribute on the row, not a second subject.
+
+This is the clearest example of a modelling choice paying off downstream. Because the grain is already "per club", every dashboard query is a plain `GROUP BY club` — net spend, busiest clubs, incoming vs outgoing — with no self-joins and no "is this club the buyer or the seller?" gymnastics in the SQL. Had we stored one row per transfer with `buyer` and `seller` columns instead, every single club-level chart would have needed to `UNION` the two sides back apart at query time, in the dashboard, repeatedly. We paid that cost once, in the model, where it belongs.
 
 ## Direction and mechanism in one mini-dimension
 
@@ -96,6 +100,18 @@ FROM dim_team
 
 When the counterparty is foreign or a placeholder, the join misses and we fall back to a sentinel key (`-1 Unknown`). That's expected and allowed — more on that below.
 
+## Conformed dimensions: why a new fact was cheap to add
+
+Here's the part that made adding an entirely new business process feel almost easy, and it's worth dwelling on because it's the whole point of dimensional modelling. `fct_team_transfers` didn't need a new calendar, a new club list, or a new player registry. It reused the **conformed dimensions** that already existed for matches and appearances: the same `dim_date`, the same `dim_team`, the same `dim_player`. A conformed dimension is one that means exactly the same thing — same keys, same attributes — to every fact that touches it. That shared meaning is what lets two facts built months apart talk to each other.
+
+The payoff is concrete and it's mostly a *downstream* payoff:
+
+- Because transfers join the same `dim_date` as matches, the dashboard's Year filter and the derived season logic work identically on the Transfer page as on every other page. No new date handling, no parallel "transfer calendar".
+- Because the subject club is the same `dim_team` used league-wide, a club is the same entity on the Transfer page as on its team page — same surrogate key, same name, same logo. The `dim_transfer_partner_team` role-play sits on top of that same dimension, so a partner club and a "real" club are guaranteed to reconcile.
+- The only genuinely new dimensions were the two tiny transfer-specific ones (`dim_transfer_type`, `dim_transfer_status`). Everything else was already conformed and waiting.
+
+We keep a [bus matrix](https://en.wikipedia.org/wiki/Bus_matrix) in the project README — a grid of business processes against dimensions — and adding transfers was, almost literally, adding one column to that grid and ticking the dimensions it shares. When the matrix lines up, a "new" fact is a small, well-understood piece of work. When it doesn't, you discover that two teams of the same name have different keys in different tables, and integration becomes a debugging nightmare. The boring discipline of conforming dimensions early is what kept this one boring.
+
 ## Why we rebuild the whole table every run
 
 Every other fact table is incremental on a date window: new matches land, we process the new dates. Transfers break that assumption. A transfer's *effective date* has nothing to do with when it shows up in the API — backfills arrive late, and future-dated deals (a summer signing announced in spring) would be skipped entirely by a "process yesterday's dates" filter. The table is also tiny — on the order of 10k rows. So `fct_team_transfers` is a plain full rebuild each run. Correct *and* simpler; the incremental machinery would have been complexity with no payoff.
@@ -118,4 +134,6 @@ On top of that fact, the Transfer Intelligence page derives a few things that do
 
 ## What we took away
 
-The recurring theme: **NULL is information.** A missing fee, a missing counterparty, a retirement with no destination — each NULL meant something specific, and the model's job was to preserve those distinctions rather than flatten them into a convenient default. The two-rows-per-move grain and the role-playing partner dimension were both patterns we'd already built for fixtures, which made the structure feel familiar fast. But the real work was in the `CASE` statements — the unglamorous logic that decides whether a blank fee is a zero or an unknown. Get those right and every metric downstream is honest; get them wrong and the dashboard lies confidently.
+Two things stuck with us. The first: **NULL is information.** A missing fee, a missing counterparty, a retirement with no destination — each NULL meant something specific, and the model's job was to preserve those distinctions rather than flatten them into a convenient default. The real work was never the SQL; it was the unglamorous `CASE` statements that decide whether a blank fee is a zero or an unknown.
+
+The second, and the one we'd put first if we could only keep one: **the model is where you win or lose the dashboard.** Every hard decision here — the per-club grain, the disclosed/undisclosed/zero fee split, conforming the date, team, and player dimensions — was made days or weeks before anyone built a chart, and every one of them either handed the dashboard a feature for free or quietly removed a class of bug it would otherwise have hit. That's the uncomfortable, motivating truth of data modelling: the choices are hardest to make exactly when you have the least information about how they'll be used, and they're the choices you can least afford to get wrong. Get the model right and the dashboard almost builds itself, honestly. Get it wrong and no amount of clever front-end SQL will stop it lying confidently.
