@@ -30,6 +30,7 @@ The project was built in roughly **10 days** in April 2026, and almost nothing w
 17. [Building a Fan Forum with an LLM Pipeline]({{ site.baseurl }}{% post_url 2026-05-25-fan-forum-llm-pipeline %})
 18. [What Happens When You Share a Side Project on LinkedIn]({{ site.baseurl }}{% post_url 2026-05-25-linkedin-traffic-spike %})
 19. [What Happens When You Share a Side Project on Reddit]({{ site.baseurl }}{% post_url 2026-06-02-reddit-sportsanalytics-post %})
+20. [Modeling the Transfer Market — One Move, Two Rows, and a Fee That Might Not Exist]({{ site.baseurl }}{% post_url 2026-06-16-modeling-the-transfer-market %})
 
 ---
 
