@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 660" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#94A3B8"/>
+    </marker>
+    <style>
+      .tbl   { font-family: "Menlo", "Consolas", ui-monospace, monospace; }
+      .name  { font-weight: 700; fill: #ffffff; }
+      .col   { fill: #334155; font-size: 12px; }
+      .pk    { fill: #0f172a; font-size: 12px; font-weight: 700; }
+      .note  { fill: #64748b; font-size: 11px; font-style: italic; }
+      .lbl   { font-family: "Menlo", "Consolas", ui-monospace, monospace; font-size: 11px; fill: #475569; }
+      .legend{ font-size: 13px; fill: #334155; }
+    </style>
+  </defs>
+
+  <!-- ===== relationship lines (drawn first, under the boxes) ===== -->
+  <g stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arr)">
+    <line x1="500" y1="330" x2="222" y2="92"/>
+    <line x1="500" y1="330" x2="222" y2="330"/>
+    <line x1="500" y1="330" x2="222" y2="568"/>
+    <line x1="500" y1="330" x2="778" y2="92"/>
+    <line x1="500" y1="330" x2="778" y2="330"/>
+    <line x1="500" y1="330" x2="778" y2="568"/>
+  </g>
+  <!-- FK labels on small white chips -->
+  <g class="lbl" text-anchor="middle">
+    <g><rect x="300" y="186" width="92" height="18" rx="4" fill="#fff"/><text x="346" y="199">date_sk</text></g>
+    <g><rect x="300" y="321" width="92" height="18" rx="4" fill="#fff"/><text x="346" y="334">team_sk</text></g>
+    <g><rect x="300" y="456" width="92" height="18" rx="4" fill="#fff"/><text x="346" y="469">player_sk</text></g>
+    <g><rect x="586" y="186" width="150" height="18" rx="4" fill="#fff"/><text x="661" y="199">transfer_type_sk</text></g>
+    <g><rect x="586" y="321" width="160" height="18" rx="4" fill="#fff"/><text x="666" y="334">transfer_status_sk</text></g>
+    <g><rect x="560" y="456" width="200" height="18" rx="4" fill="#fff"/><text x="660" y="469">transfer_partner_team_sk</text></g>
+  </g>
+
+  <!-- ===== centre fact ===== -->
+  <rect x="390" y="262" width="220" height="150" rx="10" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <path d="M390 272 a10 10 0 0 1 10 -10 h200 a10 10 0 0 1 10 10 v20 h-220 z" fill="#0f172a"/>
+  <text x="500" y="284" text-anchor="middle" class="tbl name" font-size="14">fct_team_transfers</text>
+  <text x="406" y="312" class="tbl col">transfer_id</text>
+  <text x="406" y="334" class="tbl col">transfer_fee_eur</text>
+  <text x="406" y="356" class="tbl col">transfer_count</text>
+  <text x="406" y="392" class="note">one row per (transfer, club)</text>
+
+  <!-- ===== conformed dimensions (left, blue) ===== -->
+  <!-- dim_date -->
+  <rect x="32" y="52" width="190" height="80" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M32 62 a8 8 0 0 1 8 -8 h174 a8 8 0 0 1 8 8 v18 h-190 z" fill="#1D4ED8"/>
+  <text x="127" y="74" text-anchor="middle" class="tbl name" font-size="13">dim_date</text>
+  <text x="46" y="98" class="tbl pk">date_sk</text>
+  <text x="46" y="118" class="tbl col">year · month · season</text>
+  <!-- dim_team -->
+  <rect x="32" y="290" width="190" height="80" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M32 300 a8 8 0 0 1 8 -8 h174 a8 8 0 0 1 8 8 v18 h-190 z" fill="#1D4ED8"/>
+  <text x="127" y="312" text-anchor="middle" class="tbl name" font-size="13">dim_team</text>
+  <text x="46" y="336" class="tbl pk">team_sk</text>
+  <text x="46" y="356" class="tbl col">team_name · code</text>
+  <!-- dim_player -->
+  <rect x="32" y="528" width="190" height="80" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M32 538 a8 8 0 0 1 8 -8 h174 a8 8 0 0 1 8 8 v18 h-190 z" fill="#1D4ED8"/>
+  <text x="127" y="550" text-anchor="middle" class="tbl name" font-size="13">dim_player</text>
+  <text x="46" y="574" class="tbl pk">player_sk</text>
+  <text x="46" y="594" class="tbl col">player_name · position</text>
+
+  <!-- ===== transfer-specific dimensions (right, gold) ===== -->
+  <!-- dim_transfer_type -->
+  <rect x="778" y="52" width="190" height="80" rx="8" fill="#fff" stroke="#B8860B" stroke-width="1.5"/>
+  <path d="M778 62 a8 8 0 0 1 8 -8 h174 a8 8 0 0 1 8 8 v18 h-190 z" fill="#B8860B"/>
+  <text x="873" y="74" text-anchor="middle" class="tbl name" font-size="13">dim_transfer_type</text>
+  <text x="792" y="98" class="tbl pk">transfer_type_sk</text>
+  <text x="792" y="118" class="tbl col">name · direction</text>
+  <!-- dim_transfer_status -->
+  <rect x="778" y="290" width="190" height="80" rx="8" fill="#fff" stroke="#B8860B" stroke-width="1.5"/>
+  <path d="M778 300 a8 8 0 0 1 8 -8 h174 a8 8 0 0 1 8 8 v18 h-190 z" fill="#B8860B"/>
+  <text x="873" y="312" text-anchor="middle" class="tbl name" font-size="13">dim_transfer_status</text>
+  <text x="792" y="336" class="tbl pk">transfer_status_sk</text>
+  <text x="792" y="356" class="tbl col">status</text>
+  <!-- dim_transfer_partner_team -->
+  <rect x="778" y="528" width="190" height="80" rx="8" fill="#fff" stroke="#B8860B" stroke-width="1.5"/>
+  <path d="M778 538 a8 8 0 0 1 8 -8 h174 a8 8 0 0 1 8 8 v18 h-190 z" fill="#B8860B"/>
+  <text x="873" y="550" text-anchor="middle" class="tbl name" font-size="12.5">dim_transfer_partner_team</text>
+  <text x="792" y="574" class="tbl pk">..._team_sk</text>
+  <text x="792" y="594" class="tbl col">name · country</text>
+
+  <!-- ===== legend ===== -->
+  <g>
+    <rect x="360" y="612" width="14" height="14" rx="3" fill="#1D4ED8"/>
+    <text x="382" y="624" class="legend">conformed (shared with match &amp; player facts)</text>
+    <rect x="360" y="634" width="14" height="14" rx="3" fill="#B8860B"/>
+    <text x="382" y="646" class="legend">transfer-specific dimension</text>
+  </g>
+</svg>

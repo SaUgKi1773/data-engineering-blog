@@ -9,6 +9,10 @@ Most of our dimensional model is about what happens on the pitch — matches, ap
 
 That's the thing about data modelling that's easy to underrate: the difficulty is almost never the SQL. It's the decisions. What is the grain? What does a missing value *mean*? Which entity is this, really, or is it the same entity wearing a different hat? Each of those questions has several defensible answers, and you usually can't tell which one was right until weeks later, when you're building a dashboard on top and the model either bends to the question being asked or fights you the whole way. Every modelling choice in this post showed up again downstream — sometimes as a feature that fell out for free, sometimes as a bullet we'd dodged. This post walks through the full journey, from the raw API rows to a `fct_team_transfers` fact table and the Transfer Intelligence page it powers, and tries to be honest about how often "the modelling" *was* the work.
 
+![Star schema for fct_team_transfers — the fact in the centre joined to six dimensions, three conformed and three transfer-specific]({{ site.baseurl }}/assets/img/transfer-star-schema.png)
+
+*Here's the model we're building toward — a classic star schema. `fct_team_transfers` sits in the centre, joined to six dimensions: three **conformed** (blue — the same `dim_date`, `dim_team`, `dim_player` the match and player facts use) and three **transfer-specific** (gold). The rest of this post is the story of how each of those pieces was decided.*
+
 ## The raw shape
 
 Sportmonks gives us one row per transfer, with the player, both clubs, the type, and the fee embedded as nested objects. The silver model flattens that into typed columns:
