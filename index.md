@@ -31,8 +31,9 @@ The project was built in roughly **10 days** in April 2026, and almost nothing w
 18. [What Happens When You Share a Side Project on LinkedIn]({{ site.baseurl }}{% post_url 2026-05-25-linkedin-traffic-spike %})
 19. [What Happens When You Share a Side Project on Reddit]({{ site.baseurl }}{% post_url 2026-06-02-reddit-sportsanalytics-post %})
 20. [Modeling the Transfer Market — One Move, Two Rows, and a Fee That Might Not Exist]({{ site.baseurl }}{% post_url 2026-06-16-modeling-the-transfer-market %})
+21. [Going Multi-League — A Stranger Asked for Scotland, and the Warehouse Said Yes]({{ site.baseurl }}{% post_url 2026-07-05-going-multi-league %})
 
 ---
 
-**Live dashboard:** [superligaanalytics.vercel.app](https://superligaanalytics.vercel.app/)  
+**Live sites:** [Krogvad Analytics Hub](https://krogvadanalyticshub.vercel.app/) · [Superliga Analytics](https://superligaanalytics.vercel.app/) · [Scottish Premiership Analytics](https://scottishpremiershipanalytics.vercel.app/)  
 **Source code:** [github.com/SaUgKi1773/data-engineering-demo](https://github.com/SaUgKi1773/data-engineering-demo)
