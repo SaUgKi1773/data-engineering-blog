@@ -32,6 +32,7 @@ The project was built in roughly **10 days** in April 2026, and almost nothing w
 19. [What Happens When You Share a Side Project on Reddit]({{ site.baseurl }}{% post_url 2026-06-02-reddit-sportsanalytics-post %})
 20. [Modeling the Transfer Market — One Move, Two Rows, and a Fee That Might Not Exist]({{ site.baseurl }}{% post_url 2026-06-16-modeling-the-transfer-market %})
 21. [Going Multi-League — A Stranger Asked for Scotland, and the Warehouse Said Yes]({{ site.baseurl }}{% post_url 2026-07-05-going-multi-league %})
+22. [Modelling Match Events — 52,000 Moments, and a Minute That Isn't a Number]({{ site.baseurl }}{% post_url 2026-07-24-modelling-match-events %})
 
 ---
 

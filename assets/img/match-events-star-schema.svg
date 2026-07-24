@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,1 L9,5 L0,9 z" fill="#94A3B8"/>
+    </marker>
+    <style>
+      .tbl   { font-family: "Menlo", "Consolas", ui-monospace, monospace; }
+      .name  { font-weight: 700; fill: #ffffff; }
+      .col   { fill: #334155; font-size: 12px; }
+      .pk    { fill: #0f172a; font-size: 12px; font-weight: 700; }
+      .note  { fill: #64748b; font-size: 11px; font-style: italic; }
+      .legend{ font-size: 13px; fill: #334155; }
+    </style>
+  </defs>
+
+  <!-- ===== relationship lines (drawn first, under the boxes) ===== -->
+  <g stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arr)">
+    <!-- left, conformed -->
+    <line x1="600" y1="222" x2="232" y2="54"/>
+    <line x1="600" y1="222" x2="232" y2="134"/>
+    <line x1="600" y1="222" x2="232" y2="214"/>
+    <line x1="600" y1="222" x2="232" y2="294"/>
+    <line x1="600" y1="222" x2="232" y2="374"/>
+    <!-- right, conformed -->
+    <line x1="600" y1="222" x2="968" y2="54"/>
+    <line x1="600" y1="222" x2="968" y2="134"/>
+    <line x1="600" y1="222" x2="968" y2="214"/>
+    <line x1="600" y1="222" x2="968" y2="294"/>
+    <line x1="600" y1="222" x2="968" y2="374"/>
+    <!-- bottom, event-specific -->
+    <line x1="600" y1="222" x2="470" y2="458"/>
+    <line x1="600" y1="222" x2="730" y2="458"/>
+  </g>
+
+  <!-- ===== centre fact ===== -->
+  <rect x="480" y="140" width="240" height="165" rx="10" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <path d="M480 150 a10 10 0 0 1 10 -10 h220 a10 10 0 0 1 10 10 v20 h-240 z" fill="#0f172a"/>
+  <text x="600" y="162" text-anchor="middle" class="tbl name" font-size="14">fct_match_events</text>
+  <text x="496" y="192" class="tbl col">event_group_sequence</text>
+  <text x="496" y="212" class="tbl col">home_score_after_event</text>
+  <text x="496" y="232" class="tbl col">away_score_after_event</text>
+  <text x="496" y="252" class="tbl col">event_count</text>
+  <text x="496" y="284" class="note">one row per match event</text>
+
+  <!-- ===== conformed dimensions, left (blue) ===== -->
+  <rect x="32" y="20" width="200" height="68" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M32 30 a8 8 0 0 1 8 -8 h184 a8 8 0 0 1 8 8 v18 h-200 z" fill="#1D4ED8"/>
+  <text x="132" y="42" text-anchor="middle" class="tbl name" font-size="13">dim_date</text>
+  <text x="46" y="64" class="tbl pk">date_sk</text>
+  <text x="46" y="81" class="tbl col">year · season</text>
+
+  <rect x="32" y="100" width="200" height="68" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M32 110 a8 8 0 0 1 8 -8 h184 a8 8 0 0 1 8 8 v18 h-200 z" fill="#1D4ED8"/>
+  <text x="132" y="122" text-anchor="middle" class="tbl name" font-size="13">dim_time</text>
+  <text x="46" y="144" class="tbl pk">time_sk</text>
+  <text x="46" y="161" class="tbl col">kick-off hour</text>
+
+  <rect x="32" y="180" width="200" height="68" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M32 190 a8 8 0 0 1 8 -8 h184 a8 8 0 0 1 8 8 v18 h-200 z" fill="#1D4ED8"/>
+  <text x="132" y="202" text-anchor="middle" class="tbl name" font-size="13">dim_match</text>
+  <text x="46" y="224" class="tbl pk">match_sk</text>
+  <text x="46" y="241" class="tbl col">fixture · round</text>
+
+  <rect x="32" y="260" width="200" height="68" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M32 270 a8 8 0 0 1 8 -8 h184 a8 8 0 0 1 8 8 v18 h-200 z" fill="#1D4ED8"/>
+  <text x="132" y="282" text-anchor="middle" class="tbl name" font-size="13">dim_league</text>
+  <text x="46" y="304" class="tbl pk">league_sk</text>
+  <text x="46" y="321" class="tbl col">league · country</text>
+
+  <rect x="32" y="340" width="200" height="68" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M32 350 a8 8 0 0 1 8 -8 h184 a8 8 0 0 1 8 8 v18 h-200 z" fill="#1D4ED8"/>
+  <text x="132" y="362" text-anchor="middle" class="tbl name" font-size="13">dim_stadium</text>
+  <text x="46" y="384" class="tbl pk">stadium_sk</text>
+  <text x="46" y="401" class="tbl col">venue · city</text>
+
+  <!-- ===== conformed dimensions, right (blue) ===== -->
+  <rect x="968" y="20" width="200" height="68" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M968 30 a8 8 0 0 1 8 -8 h184 a8 8 0 0 1 8 8 v18 h-200 z" fill="#1D4ED8"/>
+  <text x="1068" y="42" text-anchor="middle" class="tbl name" font-size="13">dim_team</text>
+  <text x="982" y="64" class="tbl pk">team_sk</text>
+  <text x="982" y="81" class="tbl col">team_name · code</text>
+
+  <rect x="968" y="100" width="200" height="68" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M968 110 a8 8 0 0 1 8 -8 h184 a8 8 0 0 1 8 8 v18 h-200 z" fill="#1D4ED8"/>
+  <text x="1068" y="122" text-anchor="middle" class="tbl name" font-size="12.5">dim_opponent_team</text>
+  <text x="982" y="144" class="tbl pk">opponent_team_sk</text>
+  <text x="982" y="161" class="tbl col">role-playing view</text>
+
+  <rect x="968" y="180" width="200" height="68" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M968 190 a8 8 0 0 1 8 -8 h184 a8 8 0 0 1 8 8 v18 h-200 z" fill="#1D4ED8"/>
+  <text x="1068" y="202" text-anchor="middle" class="tbl name" font-size="13">dim_player</text>
+  <text x="982" y="224" class="tbl pk">player_sk</text>
+  <text x="982" y="241" class="tbl col">player · position</text>
+
+  <rect x="968" y="260" width="200" height="68" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M968 270 a8 8 0 0 1 8 -8 h184 a8 8 0 0 1 8 8 v18 h-200 z" fill="#1D4ED8"/>
+  <text x="1068" y="282" text-anchor="middle" class="tbl name" font-size="13">dim_referee</text>
+  <text x="982" y="304" class="tbl pk">referee_sk</text>
+  <text x="982" y="321" class="tbl col">referee_name</text>
+
+  <rect x="968" y="340" width="200" height="68" rx="8" fill="#fff" stroke="#1D4ED8" stroke-width="1.5"/>
+  <path d="M968 350 a8 8 0 0 1 8 -8 h184 a8 8 0 0 1 8 8 v18 h-200 z" fill="#1D4ED8"/>
+  <text x="1068" y="362" text-anchor="middle" class="tbl name" font-size="13">dim_team_side</text>
+  <text x="982" y="384" class="tbl pk">team_side_sk</text>
+  <text x="982" y="401" class="tbl col">home · away</text>
+
+  <!-- ===== event-specific dimensions (gold) ===== -->
+  <rect x="330" y="458" width="280" height="86" rx="8" fill="#fff" stroke="#B8860B" stroke-width="1.5"/>
+  <path d="M330 468 a8 8 0 0 1 8 -8 h264 a8 8 0 0 1 8 8 v18 h-280 z" fill="#B8860B"/>
+  <text x="470" y="480" text-anchor="middle" class="tbl name" font-size="13">dim_match_event_type</text>
+  <text x="346" y="502" class="tbl pk">match_event_type_sk</text>
+  <text x="346" y="519" class="tbl col">event_group · type · sub-type</text>
+  <text x="346" y="536" class="note">grouped by effect on the match</text>
+
+  <rect x="650" y="458" width="280" height="86" rx="8" fill="#fff" stroke="#B8860B" stroke-width="1.5"/>
+  <path d="M650 468 a8 8 0 0 1 8 -8 h264 a8 8 0 0 1 8 8 v18 h-280 z" fill="#B8860B"/>
+  <text x="790" y="480" text-anchor="middle" class="tbl name" font-size="13">dim_match_minute</text>
+  <text x="666" y="502" class="tbl pk">match_minute_sk</text>
+  <text x="666" y="519" class="tbl col">'45+3' · period · bucket</text>
+  <text x="666" y="536" class="note">the match clock, not a number</text>
+
+  <!-- ===== legend ===== -->
+  <g>
+    <rect x="400" y="580" width="14" height="14" rx="3" fill="#1D4ED8"/>
+    <text x="422" y="592" class="legend">conformed (shared with the match, player &amp; transfer facts)</text>
+    <rect x="400" y="602" width="14" height="14" rx="3" fill="#B8860B"/>
+    <text x="422" y="614" class="legend">new for match events</text>
+  </g>
+</svg>
